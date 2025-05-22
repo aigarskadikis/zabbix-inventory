@@ -28,7 +28,7 @@ return input.NumberOfLogicalProcessors;
 }
 ```
 
-Store in "Contract number", later access with:
+Populates host inventory field "Contract number", later access with:
 ```
 {INVENTORY.CONTRACT.NUMBER}
 ```
@@ -39,7 +39,8 @@ Store in "Contract number", later access with:
 ```
 vfs.file.contents[/etc/os-release]
 ```
-JavaScript preprocessing for dependent item
+Preprocessing steps for dependent item
+Regular expression
 ```regex
 PRETTY_NAME=.(.*).
 ```
@@ -48,12 +49,14 @@ PRETTY_NAME=.(.*).
 ```
 wmi.getall[root\cimv2,SELECT * FROM Win32_OperatingSystem]
 ```
-Json path preprocessing for dependent item:
+Preprocessing steps for dependent item
+JSONPath
 ```jsonpath
 $[0].Caption
 ```
+Replace "Microsoft " with nothing
 
-Store in "Type", later access with:
+Populates host inventory field "Type", later access with:
 ```
 {INVENTORY.TYPE}
 ```
@@ -80,7 +83,7 @@ Json path preprocessing for dependent item:
 ```
 
 
-Store in "HW architecture", later access with:
+Populates host inventory field "HW architecture", later access with:
 ```
 {INVENTORY.HW.ARCH}
 ```
