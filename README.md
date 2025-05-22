@@ -58,3 +58,31 @@ Store in "Type", later access with:
 {INVENTORY.TYPE}
 ```
 
+
+## Architecture
+
+### Linux
+```
+system.uname
+```
+JavaScript preprocessing for dependent item
+```javascript
+
+```
+
+### Windows
+```
+system.uname
+```
+Json path preprocessing for dependent item:
+```javascript
+
+```
+
+
+Store in "HW architecture", later access with:
+```
+{INVENTORY.HW.ARCH}
+```
+
+
