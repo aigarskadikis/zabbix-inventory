@@ -1,19 +1,22 @@
-# Collection to obtain data from Windows/Linux servers/workstations
+# Common inventory fields between Linux and Windows
 
-This is tested and works with Zabbix 7.0 agentd(agent1)
+This is tested and works with zabbix_agentd 7.0
 
 ## Amount of CPUs
 
 ### Linux
+Zabbix agent Key:
 ```
 vfs.file.contents[/proc/cpuinfo]
 ```
 JavaScript preprocessing for dependent item
+Count amount of processors. JavaScript:
 ```javascript
 return value.match(/^processor/gm).length;
 ```
 
 ### Windows
+Zabbix agent Key:
 ```
 wmi.getall[root\cimv2,SELECT * FROM Win32_Processor]
 ```
@@ -28,64 +31,85 @@ return input.NumberOfLogicalProcessors;
 }
 ```
 
-Populates host inventory field "Contract number", later access with:
-```
-{INVENTORY.CONTRACT.NUMBER}
-```
 
 ## Operating system
 
 ### Linux
+Zabbix agent Key:
 ```
 vfs.file.contents[/etc/os-release]
 ```
-Preprocessing steps for dependent item
-Regular expression
+#### Preprocessing steps for dependent item
+Extract only pretty name. Regular expression:
 ```regex
 PRETTY_NAME=.(.*).
 ```
 
 ### Windows
+Zabbix agent Key:
 ```
 wmi.getall[root\cimv2,SELECT * FROM Win32_OperatingSystem]
 ```
-Preprocessing steps for dependent item
-JSONPath
+#### Preprocessing steps for dependent item
+Extract only "Caption". JSONPath:
 ```jsonpath
 $[0].Caption
 ```
-Replace "Microsoft " with nothing
-
-Populates host inventory field "Type", later access with:
-```
-{INVENTORY.TYPE}
-```
 
 
-## Architecture
+## Disk
 
 ### Linux
+Zabbix agent Key:
 ```
-system.uname
+vfs.file.contents[/proc/partitions]
 ```
-JavaScript preprocessing for dependent item
+#### Preprocessing steps for dependent item
+Read lines which are not partitions. JavaScript:
 ```javascript
-
+var input = value.match(/\d+\s+0\s+\d+\s+\S+/gm);
+var out = [];
+for (var n = 0; n < input.length; n++) {
+    var row = {};
+    row["disk"] = input[n].match(/\d+\s+0\s+\d+\s+(\S+)/)[1];
+    row["size"] = input[n].match(/\d+\s+0\s+(\d+)\s+\S+/)[1];
+    out.push(row);
+}
+return JSON.stringify(out);
 ```
+
+Ignore "sr0" and "loop0". JSONPath:
+```
+$..[?(!(@.['disk'] =~ "^sr" || @.['disk'] =~ "^loop"))]
+```
+
+Sum total size of all disks together. JSONPath:
+```
+$[*].size.sum()
+```
+
+Convert kilobytes to bytes. Custom multiplier:
+```
+1024
+```
+
 
 ### Windows
+Zabbix agent Key:
 ```
-system.uname
-```
-Json path preprocessing for dependent item:
-```javascript
-
+wmi.getall[root\cimv2,SELECT * FROM Win32_DiskDrive]
 ```
 
+#### Preprocessing steps for dependent item
+Ignore model "Microsoft Virtual Disk". JSONPath:
+```jsonpath
+$..[?(!(@.['Model'] == 'Microsoft Virtual Disk'))]
+```
 
-Populates host inventory field "HW architecture", later access with:
+Ignore USB devices. JSONPath:
+```jsonpath
+$..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
 ```
-{INVENTORY.HW.ARCH}
-```
+
 
 
