@@ -1,4 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 # Linux/Windows common inventory fields
+
+- [Linux/Windows common inventory fields](#linuxwindows-common-inventory-fields)
+  - [Amount of CPUs](#amount-of-cpus)
+  - [Operating system](#operating-system)
+  - [Disk](#disk)
+  - [Total memory](#total-memory)
+  - [Swap/page file](#swappage-file)
+  - [Version of Zabbix agent](#version-of-zabbix-agent)
+  - [IP address](#ip-address)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 This is tested and works with zabbix_agentd 7.0
 
@@ -40,22 +54,26 @@ return input.NumberOfLogicalProcessors;
 ## Operating system
 
 **Linux**
+
 Native Zabbix agent Key:
 ```
 vfs.file.contents[/etc/os-release]
 ```
 **Preprocessing steps for dependent item**
+
 Extract only pretty name. Regular expression:
 ```regex
 PRETTY_NAME=.(.*).
 ```
 
 **Windows**
+
 Native Zabbix agent Key:
 ```
 wmi.getall[root\cimv2,SELECT * FROM Win32_OperatingSystem]
 ```
 **Preprocessing steps for dependent item**
+
 Extract only "Caption". JSONPath:
 ```jsonpath
 $[0].Caption
@@ -65,11 +83,13 @@ $[0].Caption
 ## Disk
 
 **Linux**
+
 Native Zabbix agent Key:
 ```
 vfs.file.contents[/proc/partitions]
 ```
 **Preprocessing steps for dependent item**
+
 Read lines which are not partitions. JavaScript:
 ```javascript
 var input = value.match(/\d+\s+0\s+\d+\s+\S+/gm);
@@ -100,12 +120,14 @@ Convert kilobytes to bytes. Custom multiplier:
 
 
 **Windows**
+
 Native Zabbix agent Key:
 ```
 wmi.getall[root\cimv2,SELECT * FROM Win32_DiskDrive]
 ```
 
 **Preprocessing steps for dependent item**
+
 Ignore model "Microsoft Virtual Disk". JSONPath:
 ```jsonpath
 $..[?(!(@.['Model'] == 'Microsoft Virtual Disk'))]
@@ -123,11 +145,13 @@ $..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
 ## Total memory
 
 **Linux**
+
 Zabbix agent Key:
 ```
 vfs.file.contents[/proc/meminfo,]
 ```
 **Preprocessing steps for dependent item**
+
 Read lines which are not partitions. Regular expression:
 ```regex
 MemTotal:\s+([0-9]+)
@@ -140,12 +164,14 @@ Convert kilobytes to bytes. Custom multiplier:
 
 
 **Windows**
+
 Zabbix agent Key:
 ```
 wmi.getall[root\cimv2,SELECT * FROM Win32_PhysicalMemory]
 ```
 
 **Preprocessing steps for dependent item**
+
 Size of all memory modules in bytes. JSONPath:
 ```jsonpath
 $[*].Capacity.sum()
@@ -156,11 +182,13 @@ $[*].Capacity.sum()
 ## Swap/page file
 
 **Linux**
+
 Zabbix agent Key:
 ```
 vfs.file.contents[/proc/meminfo,]
 ```
 **Preprocessing steps for dependent item**
+
 Read lines which are not partitions. Regular expression:
 ```regex
 SwapTotal:\s+(\d+)
@@ -172,11 +200,13 @@ Convert kilobytes to bytes. Custom multiplier:
 
 
 **Windows**
+
 Zabbix agent Key:
 ```
 wmi.getall[root\cimv2,SELECT * FROM Win32_OperatingSystem]
 ```
 **Preprocessing steps for dependent item**
+
 Size of paging file. JSONPath:
 ```jsonpath
 $[0].SizeStoredInPagingFiles
@@ -190,11 +220,13 @@ Convert kilobytes to bytes. Custom multiplier:
 ## Version of Zabbix agent
 
 **Linux/Windows**
+
 Zabbix agent Key:
 ```
 agent.version
 ```
 **Preprocessing steps for dependent item**
+
 Read lines which are not partitions. Regular expression:
 ```javascript
 // allow version to be sorted alphabetically
@@ -212,11 +244,13 @@ if (minor > 9) { return major + '.' + minor } else { return major + '.0' + minor
 ## IP address
 
 **Linux**
+
 Zabbix agent Key:
 ```
 vfs.file.contents[/proc/net/fib_trie,]
 ```
 **Preprocessing steps for dependent item**
+
 Ignore IPs which start with "127" or "169". Ignore IPs which ends with "0", "1", "254", "255". JavaScript:
 ```javascript
 // remove new line characters, leave only printable characters
@@ -252,14 +286,14 @@ return filter[0];
 
 
 **Windows**
+
 Zabbix agent Key:
 ```
 wmi.getall[root\cimv2,SELECT * FROM Win32_NetworkAdapterConfiguration]
 ```
 **Preprocessing steps for dependent item**
+
 Extract IP address. JSONPath:
 ```jsonpath
 $..[?(@.['IPAddress'])].IPAddress[0].first()
 ```
-
-
