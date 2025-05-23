@@ -113,3 +113,38 @@ $..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
 
 
 
+
+
+
+
+
+## Total memory
+
+### Linux
+Zabbix agent Key:
+```
+vfs.file.contents[/proc/meminfo]
+```
+#### Preprocessing steps for dependent item
+Read lines which are not partitions. Regular expression:
+```regex
+MemTotal:\s+(\d+)
+```
+
+Convert kilobytes to bytes. Custom multiplier:
+```
+1024
+```
+
+
+### Windows
+Zabbix agent Key:
+```
+wmi.getall[root\cimv2,SELECT * FROM Win32_PhysicalMemory]
+```
+
+#### Preprocessing steps for dependent item
+Size of all memory modules in bytes. JSONPath:
+```jsonpath
+$[*].Capacity.sum()
+```
