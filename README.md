@@ -5,22 +5,26 @@ This is tested and works with zabbix_agentd 7.0
 ## Amount of CPUs
 
 **Linux**
+
 Native Zabbix agent Key:
 ```
 vfs.file.contents[/proc/cpuinfo]
 ```
 **Preprocessing steps for dependent item**
+
 Count of processors. JavaScript:
 ```javascript
 return value.match(/^processor/gm).length;
 ```
 
 **Windows**
+
 Native Zabbix agent Key:
 ```
 wmi.getall[root\cimv2,SELECT * FROM Win32_Processor]
 ```
 **Preprocessing**
+
 If "ThreadCount" then use that as amount of processors, otherwise use "NumberOfLogicalProcessors". JavaScript:
 ```javascript
 // locate ThreadCount, but if it not exists, report NumberOfLogicalProcessors
