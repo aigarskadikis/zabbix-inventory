@@ -2,14 +2,14 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 # Linux/Windows common inventory fields
 
-- [Linux/Windows common inventory fields](#linuxwindows-common-inventory-fields)
-  - [Amount of CPUs](#amount-of-cpus)
-  - [Operating system](#operating-system)
-  - [Disk](#disk)
-  - [Total memory](#total-memory)
-  - [Swap/page file](#swappage-file)
-  - [Version of Zabbix agent](#version-of-zabbix-agent)
-  - [IP address](#ip-address)
+- [Amount of CPUs](#amount-of-cpus)
+- [Operating system](#operating-system)
+- [Disk](#disk)
+- [Total memory](#total-memory)
+- [Swap/page file](#swappage-file)
+- [Version of Zabbix agent](#version-of-zabbix-agent)
+- [IP address](#ip-address)
+- [Boot time](#boot-time)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -297,3 +297,37 @@ Extract IP address. JSONPath:
 ```jsonpath
 $..[?(@.['IPAddress'])].IPAddress[0].first()
 ```
+
+
+
+## Boot time
+
+**Linux**
+
+Zabbix agent Key:
+```
+system.boottime
+```
+Units:
+```
+unixtime
+```
+
+
+**Windows**
+
+Zabbix agent Key:
+```
+wmi.getall[root\cimv2,SELECT * FROM Win32_OperatingSystem]
+```
+**Preprocessing steps for dependent item**
+
+JSONPath:
+```jsonpath
+$[0].LastBootUpTime
+```
+regex extracts \1.\2.\3
+```regex
+^(....)(..)(..)
+```
+
