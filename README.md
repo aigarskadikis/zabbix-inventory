@@ -1,6 +1,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-# Linux/Windows common inventory fields
+# Audit Linux/Windows servers/workstations
 
 - [Operating system](#operating-system)
 - [CPU architecture](#cpu-architecture)
@@ -9,9 +9,9 @@
 - [Total memory](#total-memory)
 - [Swap/page file](#swappage-file)
 - [Disk](#disk)
+- [Boot time](#boot-time)
 - [Version of Zabbix agent](#version-of-zabbix-agent)
 - [IP address](#ip-address)
-- [Boot time](#boot-time)
 
 
 
@@ -295,6 +295,52 @@ $..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
 ```
 
 
+## Boot time
+
+**Linux**
+
+Zabbix agent Key:
+```mathematica
+system.boottime
+```
+
+**Preprocessing steps for dependent item**
+
+```javascript
+// convert unixtime to human readable
+function pad(n) { return n < 10 ? '0' + n : n }
+
+function formatDate(unix) {
+var d = new Date(unix * 1000);
+return d.getFullYear()
++ '.' + pad(d.getMonth() + 1)
++ '.' + pad(d.getDate())
++ ' ' + pad(d.getHours())
++ ':' + pad(d.getMinutes())
++ ':' + pad(d.getSeconds())
+}
+
+return formatDate(value);
+```
+
+
+**Windows**
+
+Zabbix agent Key:
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
+```
+**Preprocessing steps for dependent item**
+
+JSONPath:
+```javascript
+$[0].LastBootUpTime
+```
+Regular expression:
+```
+^(....)(..)(..)
+```
+Extract \1.\2.\3
 
 
 
@@ -380,35 +426,4 @@ $..[?(@.['IPAddress'])].IPAddress[0].first()
 
 
 
-## Boot time
-
-**Linux**
-
-Zabbix agent Key:
-```mathematica
-system.boottime
-```
-Units:
-```
-unixtime
-```
-
-
-**Windows**
-
-Zabbix agent Key:
-```mathematica
-wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
-```
-**Preprocessing steps for dependent item**
-
-JSONPath:
-```javascript
-$[0].LastBootUpTime
-```
-Regular expression:
-```
-^(....)(..)(..)
-```
-Extract \1.\2.\3
 
