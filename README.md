@@ -22,7 +22,7 @@ This is tested and works with zabbix_agentd 7.0
 
 Native Zabbix agent Key:
 ```mathematica
-vfs.file.contents["/proc/cpuinfo"]
+vfs.file.contents["/proc/cpuinfo",]
 ```
 **Preprocessing steps for dependent item**
 
@@ -57,7 +57,7 @@ return input.NumberOfLogicalProcessors;
 
 Native Zabbix agent Key:
 ```mathematica
-vfs.file.contents["/proc/cpuinfo"]
+vfs.file.contents["/proc/cpuinfo",]
 ```
 **Preprocessing steps for dependent item**
 
@@ -84,7 +84,7 @@ wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 **Preprocessing steps for dependent item**
 
 Extract only "Caption". JSONPath:
-```json
+```javascript
 $[0].Caption
 ```
 
@@ -98,7 +98,7 @@ $[0].Caption
 
 Native Zabbix agent Key:
 ```mathematica
-vfs.file.contents["/etc/os-release"]
+vfs.file.contents["/etc/os-release",]
 ```
 **Preprocessing steps for dependent item**
 
@@ -116,7 +116,7 @@ wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 **Preprocessing steps for dependent item**
 
 Extract only "Caption". JSONPath:
-```json
+```javascript
 $[0].Caption
 ```
 
@@ -127,7 +127,7 @@ $[0].Caption
 
 Native Zabbix agent Key:
 ```mathematica
-vfs.file.contents["/proc/partitions"]
+vfs.file.contents["/proc/partitions",]
 ```
 **Preprocessing steps for dependent item**
 
@@ -145,12 +145,12 @@ return JSON.stringify(out);
 ```
 
 Ignore "sr0" and "loop0". JSONPath:
-```json
+```javascript
 $..[?(!(@.['disk'] =~ "^sr" || @.['disk'] =~ "^loop"))]
 ```
 
 Sum total size of all disks together. JSONPath:
-```json
+```javascript
 $[*].size.sum()
 ```
 
@@ -170,12 +170,12 @@ wmi.getall["root\cimv2", "SELECT * FROM Win32_DiskDrive"]
 **Preprocessing steps for dependent item**
 
 Ignore model "Microsoft Virtual Disk". JSONPath:
-```json
+```javascript
 $..[?(!(@.['Model'] == 'Microsoft Virtual Disk'))]
 ```
 
 Ignore USB devices. JSONPath:
-```json
+```javascript
 $..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
 ```
 
@@ -189,7 +189,7 @@ $..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
 
 Zabbix agent Key:
 ```mathematica
-vfs.file.contents["/proc/meminfo"]
+vfs.file.contents["/proc/meminfo",]
 ```
 **Preprocessing steps for dependent item**
 
@@ -214,7 +214,7 @@ wmi.getall["root\cimv2", "SELECT * FROM Win32_PhysicalMemory"]
 **Preprocessing steps for dependent item**
 
 Size of all memory modules in bytes. JSONPath:
-```json
+```javascript
 $[*].Capacity.sum()
 ```
 
@@ -226,7 +226,7 @@ $[*].Capacity.sum()
 
 Zabbix agent Key:
 ```mathematica
-vfs.file.contents["/proc/meminfo"]
+vfs.file.contents["/proc/meminfo",]
 ```
 **Preprocessing steps for dependent item**
 
@@ -249,7 +249,7 @@ wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 **Preprocessing steps for dependent item**
 
 Size of paging file. JSONPath:
-```json
+```javascript
 $[0].SizeStoredInPagingFiles
 ```
 Convert kilobytes to bytes. Custom multiplier:
@@ -263,7 +263,7 @@ Convert kilobytes to bytes. Custom multiplier:
 **Linux/Windows**
 
 Zabbix agent Key:
-```
+```mathematica
 agent.version
 ```
 **Preprocessing steps for dependent item**
@@ -279,16 +279,13 @@ if (minor > 9) { return major + '.' + minor } else { return major + '.0' + minor
 
 
 
-
-
-
 ## IP address
 
 **Linux**
 
 Zabbix agent Key:
-```
-vfs.file.contents[/proc/net/fib_trie,]
+```mathematica
+vfs.file.contents["/proc/net/fib_trie",]
 ```
 **Preprocessing steps for dependent item**
 
@@ -329,13 +326,13 @@ return filter[0];
 **Windows**
 
 Zabbix agent Key:
-```
-wmi.getall[root\cimv2,SELECT * FROM Win32_NetworkAdapterConfiguration]
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_NetworkAdapterConfiguration"]
 ```
 **Preprocessing steps for dependent item**
 
 Extract IP address. JSONPath:
-```jsonpath
+```javascript
 $..[?(@.['IPAddress'])].IPAddress[0].first()
 ```
 
@@ -346,7 +343,7 @@ $..[?(@.['IPAddress'])].IPAddress[0].first()
 **Linux**
 
 Zabbix agent Key:
-```
+```mathematica
 system.boottime
 ```
 Units:
@@ -358,17 +355,18 @@ unixtime
 **Windows**
 
 Zabbix agent Key:
-```
-wmi.getall[root\cimv2,SELECT * FROM Win32_OperatingSystem]
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 ```
 **Preprocessing steps for dependent item**
 
 JSONPath:
-```jsonpath
+```javascript
 $[0].LastBootUpTime
 ```
-regex extracts \1.\2.\3
-```regex
+Regular expression:
+```
 ^(....)(..)(..)
 ```
+Extract \1.\2.\3
 
