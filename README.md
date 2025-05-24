@@ -21,8 +21,8 @@ This is tested and works with zabbix_agentd 7.0
 **Linux**
 
 Native Zabbix agent Key:
-```
-vfs.file.contents[/proc/cpuinfo]
+```mathematica
+vfs.file.contents["/proc/cpuinfo"]
 ```
 **Preprocessing steps for dependent item**
 
@@ -34,8 +34,8 @@ return value.match(/^processor/gm).length;
 **Windows**
 
 Native Zabbix agent Key:
-```
-wmi.getall[root\cimv2,SELECT * FROM Win32_Processor]
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_Processor"]
 ```
 **Preprocessing**
 
@@ -51,31 +51,72 @@ return input.NumberOfLogicalProcessors;
 ```
 
 
+## CPU model
+
+**Linux**
+
+Native Zabbix agent Key:
+```mathematica
+vfs.file.contents["/proc/cpuinfo"]
+```
+**Preprocessing steps for dependent item**
+
+On x64 Linux extract "CPU name", on aarch64 extract "CPU part". JavaScript:
+```javascript
+// extract "model name" or "CPU part" code
+
+// in case master item is stored in inventory, need to remove tabs and new line characters
+var formated = value.replace(/\\t/gm, '').replace(/\\n/gm, '\n');
+
+// for x86_64
+if (formated.match(/model nam.*: (.*)/)) { return formated.match(/model nam.*: (.*)/)[1]; }
+
+// for aarch64
+if (formated.match(/CPU par.*: (.*)/)) { return formated.match(/CPU par.*: (.*)/)[1]; }
+```
+
+**Windows**
+
+Native Zabbix agent Key:
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
+```
+**Preprocessing steps for dependent item**
+
+Extract only "Caption". JSONPath:
+```json
+$[0].Caption
+```
+
+
+
+
+
 ## Operating system
 
 **Linux**
 
 Native Zabbix agent Key:
-```
-vfs.file.contents[/etc/os-release]
+```mathematica
+vfs.file.contents["/etc/os-release"]
 ```
 **Preprocessing steps for dependent item**
 
 Extract only pretty name. Regular expression:
-```regex
+```
 PRETTY_NAME=.(.*).
 ```
 
 **Windows**
 
 Native Zabbix agent Key:
-```
-wmi.getall[root\cimv2,SELECT * FROM Win32_OperatingSystem]
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 ```
 **Preprocessing steps for dependent item**
 
 Extract only "Caption". JSONPath:
-```jsonpath
+```json
 $[0].Caption
 ```
 
@@ -85,8 +126,8 @@ $[0].Caption
 **Linux**
 
 Native Zabbix agent Key:
-```
-vfs.file.contents[/proc/partitions]
+```mathematica
+vfs.file.contents["/proc/partitions"]
 ```
 **Preprocessing steps for dependent item**
 
@@ -104,12 +145,12 @@ return JSON.stringify(out);
 ```
 
 Ignore "sr0" and "loop0". JSONPath:
-```
+```json
 $..[?(!(@.['disk'] =~ "^sr" || @.['disk'] =~ "^loop"))]
 ```
 
 Sum total size of all disks together. JSONPath:
-```
+```json
 $[*].size.sum()
 ```
 
@@ -122,19 +163,19 @@ Convert kilobytes to bytes. Custom multiplier:
 **Windows**
 
 Native Zabbix agent Key:
-```
-wmi.getall[root\cimv2,SELECT * FROM Win32_DiskDrive]
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_DiskDrive"]
 ```
 
 **Preprocessing steps for dependent item**
 
 Ignore model "Microsoft Virtual Disk". JSONPath:
-```jsonpath
+```json
 $..[?(!(@.['Model'] == 'Microsoft Virtual Disk'))]
 ```
 
 Ignore USB devices. JSONPath:
-```jsonpath
+```json
 $..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
 ```
 
@@ -147,13 +188,13 @@ $..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
 **Linux**
 
 Zabbix agent Key:
-```
-vfs.file.contents[/proc/meminfo,]
+```mathematica
+vfs.file.contents["/proc/meminfo"]
 ```
 **Preprocessing steps for dependent item**
 
 Read lines which are not partitions. Regular expression:
-```regex
+```
 MemTotal:\s+([0-9]+)
 ```
 
@@ -166,14 +207,14 @@ Convert kilobytes to bytes. Custom multiplier:
 **Windows**
 
 Zabbix agent Key:
-```
-wmi.getall[root\cimv2,SELECT * FROM Win32_PhysicalMemory]
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_PhysicalMemory"]
 ```
 
 **Preprocessing steps for dependent item**
 
 Size of all memory modules in bytes. JSONPath:
-```jsonpath
+```json
 $[*].Capacity.sum()
 ```
 
@@ -184,13 +225,13 @@ $[*].Capacity.sum()
 **Linux**
 
 Zabbix agent Key:
-```
-vfs.file.contents[/proc/meminfo,]
+```mathematica
+vfs.file.contents["/proc/meminfo"]
 ```
 **Preprocessing steps for dependent item**
 
 Read lines which are not partitions. Regular expression:
-```regex
+```
 SwapTotal:\s+(\d+)
 ```
 Convert kilobytes to bytes. Custom multiplier:
@@ -202,13 +243,13 @@ Convert kilobytes to bytes. Custom multiplier:
 **Windows**
 
 Zabbix agent Key:
-```
-wmi.getall[root\cimv2,SELECT * FROM Win32_OperatingSystem]
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 ```
 **Preprocessing steps for dependent item**
 
 Size of paging file. JSONPath:
-```jsonpath
+```json
 $[0].SizeStoredInPagingFiles
 ```
 Convert kilobytes to bytes. Custom multiplier:
