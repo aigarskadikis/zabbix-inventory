@@ -2,21 +2,85 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 # Linux/Windows common inventory fields
 
-- [Amount of CPUs](#amount-of-cpus)
 - [Operating system](#operating-system)
-- [Disk](#disk)
+- [CPU architecture](#cpu-architecture)
+- [Amount of CPUs](#cpus)
+- [CPU model](#cpu-model)
 - [Total memory](#total-memory)
 - [Swap/page file](#swappage-file)
+- [Disk](#disk)
 - [Version of Zabbix agent](#version-of-zabbix-agent)
 - [IP address](#ip-address)
 - [Boot time](#boot-time)
+
+
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
 This is tested and works with zabbix_agentd 7.0
 
-## Amount of CPUs
+
+## Operating system
+
+**Linux**
+
+Native Zabbix agent Key:
+```mathematica
+vfs.file.contents["/etc/os-release",]
+```
+**Preprocessing steps for dependent item**
+
+Extract only pretty name. Regular expression:
+```
+PRETTY_NAME=.(.*).
+```
+
+**Windows**
+
+Native Zabbix agent Key:
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
+```
+**Preprocessing steps for dependent item**
+
+Extract only "Caption". JSONPath:
+```javascript
+$[0].Caption
+```
+
+
+## CPU architecture
+
+**Linux/Windows**
+
+Native Zabbix agent Key:
+```mathematica
+system.uname
+```
+**Preprocessing steps for dependent item**
+
+JavaScript:
+```javascript
+var patterns = [
+    { regex: /x86_64/gm, result: 'x64_86' },
+    { regex: /aarch64/gm, result: 'aarch64' },
+    { regex: /x86$/gm, result: 'x86' },
+    { regex: / x64/gm, result: 'x64_86' }
+];
+
+for (var i = 0; i < patterns.length; i++) {
+    if (value.match(patterns[i].regex)) {
+        return patterns[i].result;
+    }
+}
+
+return value;
+```
+
+
+
+## CPUs
 
 **Linux**
 
@@ -49,6 +113,8 @@ return input.ThreadCount;
 return input.NumberOfLogicalProcessors;
 }
 ```
+
+
 
 
 ## CPU model
@@ -87,99 +153,6 @@ Extract only "Caption". JSONPath:
 ```javascript
 $[0].Caption
 ```
-
-
-
-
-
-## Operating system
-
-**Linux**
-
-Native Zabbix agent Key:
-```mathematica
-vfs.file.contents["/etc/os-release",]
-```
-**Preprocessing steps for dependent item**
-
-Extract only pretty name. Regular expression:
-```
-PRETTY_NAME=.(.*).
-```
-
-**Windows**
-
-Native Zabbix agent Key:
-```mathematica
-wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
-```
-**Preprocessing steps for dependent item**
-
-Extract only "Caption". JSONPath:
-```javascript
-$[0].Caption
-```
-
-
-## Disk
-
-**Linux**
-
-Native Zabbix agent Key:
-```mathematica
-vfs.file.contents["/proc/partitions",]
-```
-**Preprocessing steps for dependent item**
-
-Read lines which are not partitions. JavaScript:
-```javascript
-var input = value.match(/\d+\s+0\s+\d+\s+\S+/gm);
-var out = [];
-for (var n = 0; n < input.length; n++) {
-    var row = {};
-    row["disk"] = input[n].match(/\d+\s+0\s+\d+\s+(\S+)/)[1];
-    row["size"] = input[n].match(/\d+\s+0\s+(\d+)\s+\S+/)[1];
-    out.push(row);
-}
-return JSON.stringify(out);
-```
-
-Ignore "sr0" and "loop0". JSONPath:
-```javascript
-$..[?(!(@.['disk'] =~ "^sr" || @.['disk'] =~ "^loop"))]
-```
-
-Sum total size of all disks together. JSONPath:
-```javascript
-$[*].size.sum()
-```
-
-Convert kilobytes to bytes. Custom multiplier:
-```
-1024
-```
-
-
-**Windows**
-
-Native Zabbix agent Key:
-```mathematica
-wmi.getall["root\cimv2", "SELECT * FROM Win32_DiskDrive"]
-```
-
-**Preprocessing steps for dependent item**
-
-Ignore model "Microsoft Virtual Disk". JSONPath:
-```javascript
-$..[?(!(@.['Model'] == 'Microsoft Virtual Disk'))]
-```
-
-Ignore USB devices. JSONPath:
-```javascript
-$..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
-```
-
-
 
 
 
@@ -256,6 +229,75 @@ Convert kilobytes to bytes. Custom multiplier:
 ```
 1024
 ```
+
+
+
+
+
+
+
+## Disk
+
+**Linux**
+
+Native Zabbix agent Key:
+```mathematica
+vfs.file.contents["/proc/partitions",]
+```
+**Preprocessing steps for dependent item**
+
+Read lines which are not partitions. JavaScript:
+```javascript
+var input = value.match(/\d+\s+0\s+\d+\s+\S+/gm);
+var out = [];
+for (var n = 0; n < input.length; n++) {
+    var row = {};
+    row["disk"] = input[n].match(/\d+\s+0\s+\d+\s+(\S+)/)[1];
+    row["size"] = input[n].match(/\d+\s+0\s+(\d+)\s+\S+/)[1];
+    out.push(row);
+}
+return JSON.stringify(out);
+```
+
+Ignore "sr0" and "loop0". JSONPath:
+```javascript
+$..[?(!(@.['disk'] =~ "^sr" || @.['disk'] =~ "^loop"))]
+```
+
+Sum total size of all disks together. JSONPath:
+```javascript
+$[*].size.sum()
+```
+
+Convert kilobytes to bytes. Custom multiplier:
+```
+1024
+```
+
+
+**Windows**
+
+Native Zabbix agent Key:
+```mathematica
+wmi.getall["root\cimv2", "SELECT * FROM Win32_DiskDrive"]
+```
+
+**Preprocessing steps for dependent item**
+
+Ignore model "Microsoft Virtual Disk". JSONPath:
+```javascript
+$..[?(!(@.['Model'] == 'Microsoft Virtual Disk'))]
+```
+
+Ignore USB devices. JSONPath:
+```javascript
+$..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
+```
+
+
+
+
+
 
 
 ## Version of Zabbix agent
