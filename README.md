@@ -10,6 +10,7 @@
 - [Swap/page file](#swappage-file)
 - [Disk](#disk)
 - [Boot time](#boot-time)
+- [Online](#online)
 - [Version of Zabbix agent](#version-of-zabbix-agent)
 - [IP address](#ip-address)
 
@@ -299,7 +300,7 @@ $..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
 
 **Linux**
 
-Zabbix agent Key:
+Native Zabbix agent Key:
 ```mathematica
 system.boottime
 ```
@@ -311,13 +312,13 @@ system.boottime
 function pad(n) { return n < 10 ? '0' + n : n }
 
 function formatDate(unix) {
-var d = new Date(unix * 1000);
-return d.getFullYear()
-+ '.' + pad(d.getMonth() + 1)
-+ '.' + pad(d.getDate())
-+ ' ' + pad(d.getHours())
-+ ':' + pad(d.getMinutes())
-+ ':' + pad(d.getSeconds())
+    var d = new Date(unix * 1000);
+    return d.getFullYear()
+        + '.' + pad(d.getMonth() + 1)
+        + '.' + pad(d.getDate())
+        + ' ' + pad(d.getHours())
+        + ':' + pad(d.getMinutes())
+        + ':' + pad(d.getSeconds())
 }
 
 return formatDate(value);
@@ -326,7 +327,7 @@ return formatDate(value);
 
 **Windows**
 
-Zabbix agent Key:
+Native Zabbix agent Key:
 ```mathematica
 wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 ```
@@ -344,13 +345,36 @@ Extract \1.\2.\3
 
 
 
+## Online
+
+**Linux/Windows**
+
+Native Zabbix agent Key:
+```mathematica
+system.uptime
+```
+
+Item type "Calculated":
+```mathematica
+count(//system.uptime,91s)
+```
+
+**Preprocessing steps for dependent item**
+
+JavaScript:
+```javascript
+if (value > 0) {return 1} else {return 0}
+```
+Discard unchanged with heartbeat: 1d
+
+
 
 
 ## Version of Zabbix agent
 
 **Linux/Windows**
 
-Zabbix agent Key:
+Native Zabbix agent Key:
 ```mathematica
 agent.version
 ```
