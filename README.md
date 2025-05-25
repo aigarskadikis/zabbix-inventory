@@ -20,7 +20,7 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-This is tested and works with zabbix_agentd 7.0 and zabbix_agent2 7.0
+This is tested and works with zabbix_agentd 7.0
 
 ## Create dashboard
 
@@ -872,6 +872,23 @@ $..[?(@.['IPAddress'])].IPAddress[0].first()
 
 
 
+# Convert bytes to human readable
 
+Create "Script" item
+| Name                   | Key             | Parameters Name | Parameters Value                  |
+|------------------------|-----------------|-----------------|-----------------------------------|
+| Inventory total memory | inventory[ram]  | argument        | {INVENTORY.POC.PRIMARY.PHONE.A}   |
+| Inventory total swap   | inventory[swap] | argument        | {INVENTORY.POC.PRIMARY.PHONE.B}   |
+| Inventory total disk   | inventory[disk] | argument        | {INVENTORY.POC.SECONDARY.PHONE.A} |
+
+Script:
+```javascript
+return JSON.parse(value).argument;
+```
+
+Units:
+```
+B
+```
 
 
