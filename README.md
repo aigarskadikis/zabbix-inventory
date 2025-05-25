@@ -64,9 +64,10 @@ Disk
 {INVENTORY.POC.SECONDARY.PHONE.A}
 ```
 
-
-
-
+Boot time
+```
+{INVENTORY.HW.DATE.INSTALL}
+```
 
 
 ## Operating system
@@ -618,6 +619,11 @@ Key:
 boot.date
 ```
 
+Populates host inventory field:
+```
+Date HW installed
+```
+
 **Preprocessing**
 
 Regular expression:
@@ -644,6 +650,13 @@ Key:
 ```
 Win32_OperatingSystem.LastBootUpTime
 ```
+
+Populates host inventory field:
+```
+Date HW installed
+```
+
+**Preprocessing**
 
 JSONPath:
 ```javascript
