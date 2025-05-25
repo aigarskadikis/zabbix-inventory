@@ -28,14 +28,23 @@ Operating system
 ```
 {INVENTORY.OS.SHORT}
 ```
+
 Arch
 ```
 {INVENTORY.HW.ARCH}
 ```
+
 CPUs
 ```
 {INVENTORY.SERIALNO.A}
 ```
+
+CPU
+```
+{INVENTORY.MODEL}
+```
+
+
 
 
 
@@ -47,16 +56,23 @@ Native Zabbix agent Key:
 ```mathematica
 vfs.file.contents["/etc/os-release",]
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
 
-Item Name/Key:
+Name:
 ```
-PRETTY_NAME
+Inventory operating system
+```
+
+Key:
+```
+etc.os.release.pretty.name
 ```
 
 Populates host inventory field "OS (short)"
 
-Extract only pretty name. Regular expression:
+**Preprocessing**
+
+Regular expression:
 ```
 PRETTY_NAME=.(.*).
 ```
@@ -67,16 +83,23 @@ Native Zabbix agent Key:
 ```mathematica
 wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
 
-Item Name/Key:
+Name:
 ```
-Caption
+Inventory operating system
+```
+
+Key:
+```
+Win32_OperatingSystem.Caption
 ```
 
 Populates host inventory field "OS (short)"
 
-Extract only "Caption". JSONPath:
+**Preprocessing**
+
+JSONPath:
 ```javascript
 $[0].Caption
 ```
@@ -86,7 +109,7 @@ $[0].Caption
 
 **Linux/Windows**
 
-Item Name/Key:
+Name:
 ```
 uname
 ```
@@ -95,10 +118,19 @@ Native Zabbix agent Key:
 ```mathematica
 system.uname
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
+
+Name:
+```
+Inventory CPU architecture
+```
+
+Key:
+```
+cpu.architecture
+```
 
 Populates host inventory field "HW architecture"
-
 
 JavaScript:
 ```javascript
@@ -128,11 +160,17 @@ Native Zabbix agent Key:
 ```mathematica
 vfs.file.contents["/proc/cpuinfo",]
 ```
-**Preprocessing steps for dependent item**
 
-Item Name/Key:
+**Dependent item**
+
+Name:
 ```
-processors
+Inventory CPUs
+```
+
+Key:
+```
+proc.cpuinfo.CPUs
 ```
 
 Populates host inventory field "Serial number A"
@@ -146,20 +184,27 @@ return value.match(/^processor/gm).length;
 **Windows**
 
 Native Zabbix agent Key:
+
 ```mathematica
 wmi.getall["root\cimv2", "SELECT * FROM Win32_Processor"]
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
 
-Item Name/Key:
+Name:
 ```
-ThreadCount.NumberOfLogicalProcessors
+Inventory CPUs
+```
+
+Key:
+```
+Win32_Processor.CPUs
 ```
 
 Populates host inventory field "Serial number A"
 
+**Preprocessing**
 
-If "ThreadCount" then use that as amount of processors, otherwise use "NumberOfLogicalProcessors". JavaScript:
+JavaScript:
 ```javascript
 // locate ThreadCount, but if it not exists, report NumberOfLogicalProcessors
 var input = JSON.parse(value)[0];
@@ -169,7 +214,6 @@ return input.ThreadCount;
 return input.NumberOfLogicalProcessors;
 }
 ```
-
 
 
 
@@ -183,7 +227,21 @@ vfs.file.contents["/proc/cpuinfo",]
 ```
 **Preprocessing steps for dependent item**
 
-On x64 Linux extract "CPU name", on aarch64 extract "CPU part". JavaScript:
+Name:
+```
+Inventory CPU model
+```
+
+Key:
+```
+proc.cpuinfo.model.part
+```
+
+Populates host inventory field "Model"
+
+**Preprocessing**
+
+JavaScript:
 ```javascript
 // extract "model name" or "CPU part" code
 
@@ -201,13 +259,25 @@ if (formated.match(/CPU par.*: (.*)/)) { return formated.match(/CPU par.*: (.*)/
 
 Native Zabbix agent Key:
 ```mathematica
-wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
+wmi.getall["root\cimv2", "SELECT * FROM Win32_Processor"]
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
 
-Extract only "Caption". JSONPath:
+Name:
+```
+Inventory CPU model
+```
+
+Key:
+```
+Win32_Processor.Name
+```
+
+Populates host inventory field "Model"
+
+JSONPath:
 ```javascript
-$[0].Caption
+$[0].Name
 ```
 
 
@@ -220,14 +290,26 @@ Zabbix agent Key:
 ```mathematica
 vfs.file.contents["/proc/meminfo",]
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
 
-Read lines which are not partitions. Regular expression:
+Name:
+```
+Inventory total memory in bytes
+```
+
+Key:
+```
+proc.meminfo.MemTotal
+```
+
+**Preprocessing**
+
+Regular expression:
 ```
 MemTotal:\s+([0-9]+)
 ```
 
-Convert kilobytes to bytes. Custom multiplier:
+Custom multiplier:
 ```
 1024
 ```
@@ -236,20 +318,34 @@ Convert kilobytes to bytes. Custom multiplier:
 **Windows**
 
 Zabbix agent Key:
+
 ```mathematica
 wmi.getall["root\cimv2", "SELECT * FROM Win32_PhysicalMemory"]
 ```
 
 **Preprocessing steps for dependent item**
 
-Size of all memory modules in bytes. JSONPath:
+Name:
+```
+Inventory total memory in bytes
+```
+
+Key:
+```
+Win32_PhysicalMemory.Capacity
+
+```
+
+**Preprocessing**
+
+JSONPath:
 ```javascript
 $[*].Capacity.sum()
 ```
 
 
 
-## Swap/page file
+## Total swap/page file
 
 **Linux**
 
@@ -257,7 +353,19 @@ Zabbix agent Key:
 ```mathematica
 vfs.file.contents["/proc/meminfo",]
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
+
+Name:
+```
+Inventory total size of swap in bytes
+```
+
+Key:
+```
+proc.meminfo.SwapTotal
+```
+
+**Preprocessing**
 
 Read lines which are not partitions. Regular expression:
 ```
@@ -275,7 +383,18 @@ Zabbix agent Key:
 ```mathematica
 wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
+
+Name:
+```
+Inventory total size of page file in bytes
+```
+
+Key:
+```
+Win32_OperatingSystem.SizeStoredInPagingFiles
+```
+
 
 Size of paging file. JSONPath:
 ```javascript
@@ -288,10 +407,6 @@ Convert kilobytes to bytes. Custom multiplier:
 
 
 
-
-
-
-
 ## Disk
 
 **Linux**
@@ -300,9 +415,21 @@ Native Zabbix agent Key:
 ```mathematica
 vfs.file.contents["/proc/partitions",]
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
 
-Read lines which are not partitions. JavaScript:
+Name:
+```
+Inventory disk
+```
+
+Key:
+```
+proc.partitions.0
+```
+
+**Preprocessing**
+
+JavaScript:
 ```javascript
 var input = value.match(/\d+\s+0\s+\d+\s+\S+/gm);
 var out = [];
@@ -315,17 +442,17 @@ for (var n = 0; n < input.length; n++) {
 return JSON.stringify(out);
 ```
 
-Ignore "sr0" and "loop0". JSONPath:
+JSONPath:
 ```javascript
-$..[?(!(@.['disk'] =~ "^sr" || @.['disk'] =~ "^loop"))]
+$..[?(!(@.['disk'] =~ "^sr" || @.['disk'] =~ "^loop" || @.['disk'] =~ "^dm"))]
 ```
 
-Sum total size of all disks together. JSONPath:
+JSONPath:
 ```javascript
 $[*].size.sum()
 ```
 
-Convert kilobytes to bytes. Custom multiplier:
+Custom on fail:
 ```
 1024
 ```
@@ -338,7 +465,18 @@ Native Zabbix agent Key:
 wmi.getall["root\cimv2", "SELECT * FROM Win32_DiskDrive"]
 ```
 
-**Preprocessing steps for dependent item**
+**Dependent item**
+
+Name:
+```
+Inventory disk
+```
+
+Key:
+```
+Win32_DiskDrive.Size
+
+```
 
 Ignore model "Microsoft Virtual Disk". JSONPath:
 ```javascript
@@ -360,23 +498,56 @@ Native Zabbix agent Key:
 system.boottime
 ```
 
-**Preprocessing steps for dependent item**
+**Dependent item**
+
+Name:
+```
+Boot time human readable
+```
+
+Key:
+```
+boot.time
+```
+
+**Preprocessing**
+
+JavaScript:
 
 ```javascript
 // convert unixtime to human readable
 function pad(n) { return n < 10 ? '0' + n : n }
 
 function formatDate(unix) {
-    var d = new Date(unix * 1000);
-    return d.getFullYear()
-        + '.' + pad(d.getMonth() + 1)
-        + '.' + pad(d.getDate())
-        + ' ' + pad(d.getHours())
-        + ':' + pad(d.getMinutes())
-        + ':' + pad(d.getSeconds())
+var d = new Date(unix * 1000);
+return d.getFullYear()
++ '.' + pad(d.getMonth() + 1)
++ '.' + pad(d.getDate())
++ ' ' + pad(d.getHours())
++ ':' + pad(d.getMinutes())
++ ':' + pad(d.getSeconds())
 }
 
 return formatDate(value);
+```
+
+**Dependent item on a dependent item**
+
+Name:
+```
+Inventory boot date
+```
+
+Key:
+```
+boot.date
+```
+
+**Preprocessing**
+
+Regular expression:
+```
+^(\S+)
 ```
 
 
@@ -386,17 +557,33 @@ Native Zabbix agent Key:
 ```mathematica
 wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 ```
-**Preprocessing steps for dependent item**
+
+**Dependent item**
+
+Name:
+```
+Inventory boot date
+```
+
+Key:
+```
+Win32_OperatingSystem.LastBootUpTime
+```
 
 JSONPath:
 ```javascript
 $[0].LastBootUpTime
 ```
+
 Regular expression:
 ```
 ^(....)(..)(..)
 ```
-Extract \1.\2.\3
+
+Output:
+```
+\1.\2.\3
+```
 
 
 
