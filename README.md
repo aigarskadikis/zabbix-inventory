@@ -557,7 +557,12 @@ $..[?(!(@.['Model'] == 'Microsoft Virtual Disk'))]
 
 Ignore USB devices. JSONPath:
 ```javascript
-$..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
+$..[?(!(@.['InterfaceType'] == 'USB'))].Size
+```
+
+Sum of all block devices together. JSONPath:
+```javascript
+$[*].sum()
 ```
 
 
