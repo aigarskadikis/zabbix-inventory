@@ -858,7 +858,7 @@ $..[?(@.['IPAddress'])].IPAddress[0].first()
 Create "Script" item
 | Name                   | Key             | Parameters Name | Parameters Value                  |
 |------------------------|-----------------|-----------------|-----------------------------------|
-| ```Inventory total memory``` | ```inventory[ram]```  | argument        | {INVENTORY.POC.PRIMARY.PHONE.A}   |
+| Inventory total memory | inventory[ram]  | argument        | {INVENTORY.POC.PRIMARY.PHONE.A}   |
 | Inventory total swap   | inventory[swap] | argument        | {INVENTORY.POC.PRIMARY.PHONE.B}   |
 | Inventory total disk   | inventory[disk] | argument        | {INVENTORY.POC.SECONDARY.PHONE.A} |
 
