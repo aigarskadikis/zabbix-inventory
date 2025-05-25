@@ -84,10 +84,11 @@ IP
 {INVENTORY.OOB.IP}
 ```
 
+## Items
 
-## Operating system
+### Operating system
 
-**Linux**
+#### Linux
 
 Native Zabbix agent Key:
 ```mathematica
