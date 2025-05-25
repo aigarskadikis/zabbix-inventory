@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 # Audit Linux/Windows servers/workstations
 
+- [Dashboard](#create-dashboard)
 - [Operating system](#operating-system)
 - [CPU architecture](#cpu-architecture)
 - [Amount of CPUs](#cpus)
@@ -13,14 +14,29 @@
 - [Online](#online)
 - [Version of Zabbix agent](#version-of-zabbix-agent)
 - [IP address](#ip-address)
-- [Dashboard](#dashboard)
 
 
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-This is tested and works with zabbix_agentd 7.0
+This is tested and works with zabbix_agentd 7.0 and zabbix_agent2 7.0
+
+## Create dashboard
+
+Operating system
+```
+{INVENTORY.OS.SHORT}
+```
+Arch
+```
+{INVENTORY.HW.ARCH}
+```
+CPUs
+```
+{INVENTORY.SERIALNO.A}
+```
+
 
 
 ## Operating system
@@ -33,11 +49,12 @@ vfs.file.contents["/etc/os-release",]
 ```
 **Preprocessing steps for dependent item**
 
+Populates host inventory field "OS (short)"
+
 Extract only pretty name. Regular expression:
 ```
 PRETTY_NAME=.(.*).
 ```
-Populates host inventory field "OS (short)"
 
 **Windows**
 
@@ -47,11 +64,13 @@ wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 ```
 **Preprocessing steps for dependent item**
 
+Populates host inventory field "OS (short)"
+
 Extract only "Caption". JSONPath:
 ```javascript
 $[0].Caption
 ```
-Populates host inventory field "OS (short)"
+
 
 ## CPU architecture
 
@@ -62,6 +81,9 @@ Native Zabbix agent Key:
 system.uname
 ```
 **Preprocessing steps for dependent item**
+
+Populates host inventory field "HW architecture"
+
 
 JavaScript:
 ```javascript
@@ -93,6 +115,9 @@ vfs.file.contents["/proc/cpuinfo",]
 ```
 **Preprocessing steps for dependent item**
 
+Populates host inventory field "Serial number A"
+
+
 Count of processors. JavaScript:
 ```javascript
 return value.match(/^processor/gm).length;
@@ -104,7 +129,10 @@ Native Zabbix agent Key:
 ```mathematica
 wmi.getall["root\cimv2", "SELECT * FROM Win32_Processor"]
 ```
-**Preprocessing**
+**Preprocessing steps for dependent item**
+
+Populates host inventory field "Serial number A"
+
 
 If "ThreadCount" then use that as amount of processors, otherwise use "NumberOfLogicalProcessors". JavaScript:
 ```javascript
@@ -453,18 +481,5 @@ $..[?(@.['IPAddress'])].IPAddress[0].first()
 
 
 
-# Create dashboard
-Operating system
-```
-{INVENTORY.OS.SHORT}
-```
-Arch
-```
-{INVENTORY.HW.ARCH}
-```
-CPUs
-```
-{INVENTORY.SERIALNO.A}
-```
 
 
