@@ -49,6 +49,11 @@ vfs.file.contents["/etc/os-release",]
 ```
 **Preprocessing steps for dependent item**
 
+Item Name/Key:
+```
+PRETTY_NAME
+```
+
 Populates host inventory field "OS (short)"
 
 Extract only pretty name. Regular expression:
@@ -64,6 +69,11 @@ wmi.getall["root\cimv2", "SELECT * FROM Win32_OperatingSystem"]
 ```
 **Preprocessing steps for dependent item**
 
+Item Name/Key:
+```
+Caption
+```
+
 Populates host inventory field "OS (short)"
 
 Extract only "Caption". JSONPath:
@@ -75,6 +85,11 @@ $[0].Caption
 ## CPU architecture
 
 **Linux/Windows**
+
+Item Name/Key:
+```
+uname
+```
 
 Native Zabbix agent Key:
 ```mathematica
@@ -115,6 +130,11 @@ vfs.file.contents["/proc/cpuinfo",]
 ```
 **Preprocessing steps for dependent item**
 
+Item Name/Key:
+```
+processors
+```
+
 Populates host inventory field "Serial number A"
 
 
@@ -130,6 +150,11 @@ Native Zabbix agent Key:
 wmi.getall["root\cimv2", "SELECT * FROM Win32_Processor"]
 ```
 **Preprocessing steps for dependent item**
+
+Item Name/Key:
+```
+ThreadCount.NumberOfLogicalProcessors
+```
 
 Populates host inventory field "Serial number A"
 
