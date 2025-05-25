@@ -24,6 +24,11 @@ This is tested and works with zabbix_agentd 7.0 and zabbix_agent2 7.0
 
 ## Create dashboard
 
+Host
+```
+Host name
+```
+
 Operating system
 ```
 {INVENTORY.OS.SHORT}
@@ -364,7 +369,7 @@ Zabbix agent Key:
 wmi.getall["root\cimv2", "SELECT * FROM Win32_PhysicalMemory"]
 ```
 
-**Preprocessing steps for dependent item**
+**Dependent item**
 
 Name:
 ```
@@ -477,7 +482,7 @@ vfs.file.contents["/proc/partitions",]
 
 Name:
 ```
-Inventory disk
+Inventory total disk size in bytes
 ```
 
 Key:
@@ -539,8 +544,14 @@ Inventory disk
 Key:
 ```
 Win32_DiskDrive.Size
-
 ```
+
+Populates host inventory field:
+```
+Seconday POC phone A
+```
+
+**Preprocessing**
 
 Ignore model "Microsoft Virtual Disk". JSONPath:
 ```javascript
