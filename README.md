@@ -44,6 +44,22 @@ CPU
 {INVENTORY.MODEL}
 ```
 
+RAM
+```
+{INVENTORY.POC.PRIMARY.PHONE.A}
+```
+
+Swap
+```
+{INVENTORY.POC.PRIMARY.PHONE.B}
+```
+
+Disk
+```
+{INVENTORY.POC.SECONDARY.PHONE.A}
+```
+
+
 
 
 
@@ -68,7 +84,10 @@ Key:
 etc.os.release.pretty.name
 ```
 
-Populates host inventory field "OS (short)"
+Populates host inventory field:
+```
+OS (short)
+```
 
 **Preprocessing**
 
@@ -95,7 +114,10 @@ Key:
 Win32_OperatingSystem.Caption
 ```
 
-Populates host inventory field "OS (short)"
+Populates host inventory field:
+```
+OS (short)
+```
 
 **Preprocessing**
 
@@ -130,7 +152,10 @@ Key:
 cpu.architecture
 ```
 
-Populates host inventory field "HW architecture"
+Populates host inventory field:
+```
+HW architecture
+```
 
 JavaScript:
 ```javascript
@@ -173,8 +198,10 @@ Key:
 proc.cpuinfo.CPUs
 ```
 
-Populates host inventory field "Serial number A"
-
+Populates host inventory field:
+```
+Serial number A
+```
 
 Count of processors. JavaScript:
 ```javascript
@@ -200,7 +227,10 @@ Key:
 Win32_Processor.CPUs
 ```
 
-Populates host inventory field "Serial number A"
+Populates host inventory field:
+```
+Serial number A
+```
 
 **Preprocessing**
 
@@ -237,7 +267,10 @@ Key:
 proc.cpuinfo.model.part
 ```
 
-Populates host inventory field "Model"
+Populates host inventory field:
+```
+Model
+```
 
 **Preprocessing**
 
@@ -273,7 +306,10 @@ Key:
 Win32_Processor.Name
 ```
 
-Populates host inventory field "Model"
+Populates host inventory field:
+```
+Model
+```
 
 JSONPath:
 ```javascript
@@ -300,6 +336,11 @@ Inventory total memory in bytes
 Key:
 ```
 proc.meminfo.MemTotal
+```
+
+Populates host inventory field:
+```
+Primary POC phone A
 ```
 
 **Preprocessing**
@@ -336,6 +377,12 @@ Win32_PhysicalMemory.Capacity
 
 ```
 
+Populates host inventory field:
+```
+Primary POC phone A
+```
+
+
 **Preprocessing**
 
 JSONPath:
@@ -365,12 +412,18 @@ Key:
 proc.meminfo.SwapTotal
 ```
 
+Populates host inventory field:
+```
+Primary POC phone B
+```
+
 **Preprocessing**
 
 Read lines which are not partitions. Regular expression:
 ```
 SwapTotal:\s+(\d+)
 ```
+
 Convert kilobytes to bytes. Custom multiplier:
 ```
 1024
@@ -395,12 +448,17 @@ Key:
 Win32_OperatingSystem.SizeStoredInPagingFiles
 ```
 
+Populates host inventory field:
+```
+Primary POC phone B
+```
 
-Size of paging file. JSONPath:
+JSONPath:
 ```javascript
 $[0].SizeStoredInPagingFiles
 ```
-Convert kilobytes to bytes. Custom multiplier:
+
+Custom multiplier:
 ```
 1024
 ```
@@ -426,6 +484,12 @@ Key:
 ```
 proc.partitions.0
 ```
+
+Populates host inventory field:
+```
+Seconday POC phone A
+```
+
 
 **Preprocessing**
 
