@@ -74,6 +74,16 @@ Online
 {INVENTORY.DEPLOYMENT.STATUS}
 ```
 
+Agent
+```
+{INVENTORY.POC.PRIMARY.SCREEN}
+```
+
+IP
+```
+{INVENTORY.OOB.IP}
+```
+
 
 ## Operating system
 
@@ -772,6 +782,24 @@ vfs.file.contents["/proc/net/fib_trie",]
 
 **Dependent item**
 
+
+Name:
+```
+Inventory IP address
+```
+
+Key
+```
+ip.address
+```
+
+Populates host inventory field:
+```
+OOB IP address
+```
+
+**Preprocessing**
+
 Ignore IPs which start with "127" or "169". Ignore IPs which ends with "0", "1", "254", "255". JavaScript:
 ```javascript
 // remove new line characters, leave only printable characters
@@ -814,7 +842,24 @@ wmi.getall["root\cimv2", "SELECT * FROM Win32_NetworkAdapterConfiguration"]
 ```
 **Dependent item**
 
-Extract IP address. JSONPath:
+Name:
+```
+Inventory IP address
+```
+
+Key
+```
+ip.address
+```
+
+Populates host inventory field:
+```
+OOB IP address
+```
+
+**Preprocessing**
+
+JSONPath:
 ```javascript
 $..[?(@.['IPAddress'])].IPAddress[0].first()
 ```
