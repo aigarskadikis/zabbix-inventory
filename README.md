@@ -758,6 +758,12 @@ Key
 agent.version.sortable
 ```
 
+Populates host inventory field:
+```
+Primary POC screen name
+```
+
+
 **Preprocessing**
 
 JavaScript:
