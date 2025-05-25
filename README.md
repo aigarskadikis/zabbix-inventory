@@ -13,6 +13,7 @@
 - [Online](#online)
 - [Version of Zabbix agent](#version-of-zabbix-agent)
 - [IP address](#ip-address)
+- [Dashboard](#dashboard)
 
 
 
@@ -36,6 +37,7 @@ Extract only pretty name. Regular expression:
 ```
 PRETTY_NAME=.(.*).
 ```
+Populates host inventory field "OS (short)"
 
 **Windows**
 
@@ -49,7 +51,7 @@ Extract only "Caption". JSONPath:
 ```javascript
 $[0].Caption
 ```
-
+Populates host inventory field "OS (short)"
 
 ## CPU architecture
 
@@ -449,5 +451,20 @@ $..[?(@.['IPAddress'])].IPAddress[0].first()
 ```
 
 
+
+
+# Create dashboard
+Operating system
+```
+{INVENTORY.OS.SHORT}
+```
+Arch
+```
+{INVENTORY.HW.ARCH}
+```
+CPUs
+```
+{INVENTORY.SERIALNO.A}
+```
 
 
