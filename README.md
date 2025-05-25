@@ -697,7 +697,7 @@ Calculated
 
 Name:
 ```
-Online
+Inventory is online
 ```
 
 Key:
@@ -736,9 +736,21 @@ Native Zabbix agent Key:
 ```mathematica
 agent.version
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
 
-Read lines which are not partitions. Regular expression:
+Name:
+```
+Inventory version of Zabbix agent
+```
+
+Key
+```mathematica
+agent.version.sortable
+```
+
+**Preprocessing**
+
+JavaScript:
 ```javascript
 // allow version to be sorted alphabetically
 var major = value.replace(/\.[0-9]+$/,'');
@@ -757,7 +769,8 @@ Zabbix agent Key:
 ```mathematica
 vfs.file.contents["/proc/net/fib_trie",]
 ```
-**Preprocessing steps for dependent item**
+
+**Dependent item**
 
 Ignore IPs which start with "127" or "169". Ignore IPs which ends with "0", "1", "254", "255". JavaScript:
 ```javascript
@@ -799,7 +812,7 @@ Zabbix agent Key:
 ```mathematica
 wmi.getall["root\cimv2", "SELECT * FROM Win32_NetworkAdapterConfiguration"]
 ```
-**Preprocessing steps for dependent item**
+**Dependent item**
 
 Extract IP address. JSONPath:
 ```javascript
