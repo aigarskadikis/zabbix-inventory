@@ -1,24 +1,4 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 # Audit Linux/Windows servers/workstations
-
-- [Dashboard](#create-dashboard)
-- [Operating system](#operating-system)
-- [CPU architecture](#cpu-architecture)
-- [Amount of CPUs](#cpus)
-- [CPU model](#cpu-model)
-- [Total memory](#total-memory)
-- [Swap/page file](#swappage-file)
-- [Disk](#disk)
-- [Boot time](#boot-time)
-- [Online](#online)
-- [Version of Zabbix agent](#version-of-zabbix-agent)
-- [IP address](#ip-address)
-
-
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 
 This is tested and works with zabbix_agentd 7.0
 
@@ -88,7 +68,7 @@ IP
 
 ### Operating system
 
-#### Linux
+**Linux**
 
 Native Zabbix agent Key:
 ```mathematica
@@ -149,7 +129,7 @@ $[0].Caption
 ```
 
 
-## CPU architecture
+### CPU architecture
 
 **Linux/Windows**
 
@@ -199,7 +179,7 @@ return value;
 
 
 
-## CPUs
+### CPUs
 
 **Linux**
 
@@ -269,7 +249,7 @@ return input.NumberOfLogicalProcessors;
 
 
 
-## CPU model
+### CPU model
 
 **Linux**
 
@@ -340,7 +320,7 @@ $[0].Name
 
 
 
-## Total memory
+### Total memory
 
 **Linux**
 
@@ -414,7 +394,7 @@ $[*].Capacity.sum()
 
 
 
-## Total swap/page file
+### Total swap/page file
 
 **Linux**
 
@@ -487,7 +467,7 @@ Custom multiplier:
 
 
 
-## Disk
+### Disk
 
 **Linux**
 
@@ -581,7 +561,7 @@ $..[?(!(@.['InterfaceType'] == 'USB'))].Size.first()
 ```
 
 
-## Boot time
+### Boot time
 
 **Linux**
 
@@ -690,7 +670,7 @@ Output:
 ```
 
 
-## Online
+### Online
 
 **Linux/Windows**
 
@@ -739,7 +719,7 @@ Discard unchanged with heartbeat
 
 
 
-## Version of Zabbix agent
+### Version of Zabbix agent
 
 **Linux/Windows**
 
@@ -778,7 +758,7 @@ if (minor > 9) { return major + '.' + minor } else { return major + '.0' + minor
 
 
 
-## IP address
+### IP address
 
 **Linux**
 
@@ -873,7 +853,7 @@ $..[?(@.['IPAddress'])].IPAddress[0].first()
 
 
 
-# Convert bytes to human readable
+## Convert bytes to human readable
 
 Create "Script" item
 | Name                   | Key             | Parameters Name | Parameters Value                  |
