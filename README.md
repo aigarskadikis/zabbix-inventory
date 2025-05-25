@@ -684,12 +684,18 @@ Native Zabbix agent Key:
 system.uptime
 ```
 
-Item type "Calculated":
+**Calculated item**
+
+Type:
+```
+Calculated
+```
+
 ```mathematica
 count(//system.uptime,91s)
 ```
 
-**Preprocessing steps for dependent item**
+**Dependent item**
 
 JavaScript:
 ```javascript
