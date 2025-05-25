@@ -69,6 +69,11 @@ Boot time
 {INVENTORY.HW.DATE.INSTALL}
 ```
 
+Online
+```
+{INVENTORY.DEPLOYMENT.STATUS}
+```
+
 
 ## Operating system
 
@@ -674,7 +679,6 @@ Output:
 ```
 
 
-
 ## Online
 
 **Linux/Windows**
@@ -691,17 +695,35 @@ Type:
 Calculated
 ```
 
+Name:
+```
+Online
+```
+
+Key:
+```
+is.online
+```
+
+Formula:
 ```mathematica
 count(//system.uptime,91s)
 ```
 
-**Dependent item**
+Populates host inventory field:
+```
+Deployment status
+```
 
 JavaScript:
 ```javascript
 if (value > 0) {return 1} else {return 0}
 ```
-Discard unchanged with heartbeat: 1d
+
+Discard unchanged with heartbeat
+```
+1d
+```
 
 
 
